@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.czk.tliasmanagementsystem.mapper.EmpMapper">
+    <sql id = "commonSelect">
+        <where>
+            <if test="name != null">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="gender != 0 ">
+                and gender = #{gender}
+            </if>
+            <if test="job != 0">
+                and job = #{job}
+            </if>
+            <if test="entrydate != null">
+                and entrydate = #{entrydate}
+            </if>
+            <if test="deptId != null">
+                and dept_id = #{deptId}
+            </if>
+        </where>
+    </sql>
+
+    <select id = "specifiedList" resultType = "com.czk.tliasmanagementsystem.pojo.Emp">
+        select * from emp
+        <include refid="commonSelect"/>
+        limit #{start},#{pagesize}
+    </select>
+
+    <select id = "specifiedFind" resultType="java.lang.Long">
+        select count(*) from emp
+        <include refid="commonSelect"/>
+    </select>
+
+    <delete id = "delete">
+        delete from emp where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="com.czk.tliasmanagementsystem.pojo.Emp">
+        insert into emp (
+        <trim>
+            <if test="username != null">username,</if>
+            <if test="name != null">name,</if>
+            <if test="gender != null">gender,</if>
+            <if test="image != null">image,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="entrydate != null">entrydate,</if>
+            <if test="job != null">job,</if>
+        </trim>
+        create_time,update_time
+        ) values (
+        <trim>
+            <if test="username != null">#{username},</if>
+            <if test="name != null">#{name},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="image != null">#{image},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="entrydate != null">#{entrydate},</if>
+            <if test="job != null">#{job},</if>
+        </trim>
+        #{createTime},#{updateTime})
+    </insert>
+
+</mapper>
